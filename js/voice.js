@@ -1,7 +1,7 @@
 /* ========================================
    前台助手 - 语音模块 (Voice.js)
-   getUserMedia 直接录音 + 讯飞听写
-   GitHub Pages HTTPS → getUserMedia 可用
+   直接抓 PCM + 讯飞 WebSocket 听写
+   绕过 encode/decode 兼容问题
    ======================================== */
 
 (function () {
@@ -10,6 +10,7 @@
   const IAT_HOST = 'iat-api.xfyun.cn';
   const IAT_PATH = '/v2/iat';
   const IAT_URL = `wss://${IAT_HOST}${IAT_PATH}`;
+  const SAMPLE_RATE = 16000;
   const isSynthesisSupported = !!window.speechSynthesis;
 
   function getCfg() {
@@ -39,23 +40,6 @@
     const sig = await hmacSha256(c.apiSecret, origin);
     const authOrigin = `api_key="${c.apiKey}", algorithm="hmac-sha256", headers="host date request-line", signature="${sig}"`;
     return `${IAT_URL}?authorization=${btoa(authOrigin)}&date=${encodeURIComponent(date)}&host=${IAT_HOST}`;
-  }
-
-  // --- AudioBuffer → PCM 16kHz 16bit ---
-  function bufferToPCM(audioBuffer) {
-    const channel = audioBuffer.getChannelData(0);
-    const srcRate = audioBuffer.sampleRate;
-    const dstRate = 16000;
-    const ratio = srcRate / dstRate;
-    const dstLen = Math.floor(channel.length / ratio);
-    if (dstLen < 400) throw new Error('AUDIO_TOO_SHORT');
-    const pcm = new Int16Array(dstLen);
-    for (let i = 0; i < dstLen; i++) {
-      const si = i * ratio, idx = Math.floor(si), frac = si - idx;
-      const a = channel[idx] || 0, b = channel[idx + 1] || a;
-      pcm[i] = Math.max(-32768, Math.min(32767, Math.round((a + (b - a) * frac) * 32767)));
-    }
-    return pcm;
   }
 
   // --- 讯飞 WebSocket 听写 ---
@@ -98,62 +82,67 @@
   }
 
   /**
-   * 开始语音识别 (getUserMedia + MediaRecorder)
-   * @param {Function} onStatus - (msg) 每阶段回调
+   * 开始语音识别 — 直接抓 PCM 采样
+   * @param {Function} onStatus
    * @returns {Promise<string>}
    */
   function startListening(onStatus) {
     return new Promise((resolve, reject) => {
       if (!isConfigured()) return reject(new Error('STT_NOT_CONFIGURED'));
-
       onStatus && onStatus('请求麦克风…');
 
-      navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-        onStatus && onStatus('录音中…');
+      navigator.mediaDevices.getUserMedia({ audio: { sampleRate: SAMPLE_RATE, channelCount: 1, echoCancellation: true, noiseSuppression: true } })
+        .then((stream) => {
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
+          const source = audioCtx.createMediaStreamSource(stream);
+          const bufferSize = 4096;
+          const processor = audioCtx.createScriptProcessor(bufferSize, 1, 1);
+          const chunks = [];
 
-        let mime = '';
-        for (const m of ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4']) {
-          if (MediaRecorder.isTypeSupported(m)) { mime = m; break; }
-        }
-        const mr = new MediaRecorder(stream, mime ? { mimeType: mime } : {});
-        const chunks = [];
+          processor.onaudioprocess = (e) => {
+            const input = e.inputBuffer.getChannelData(0);
+            // 拷贝 Float32 → Int16
+            const int16 = new Int16Array(input.length);
+            for (let i = 0; i < input.length; i++) {
+              int16[i] = Math.max(-32768, Math.min(32767, Math.round(input[i] * 32767)));
+            }
+            chunks.push(int16);
+          };
 
-        mr.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+          source.connect(processor);
+          processor.connect(audioCtx.destination);
+          onStatus && onStatus('录音中…');
 
-        mr.onstop = async () => {
-          stream.getTracks().forEach((t) => t.stop());
-          if (chunks.length === 0) return reject(new Error('NO_AUDIO'));
-          const blob = new Blob(chunks, { type: mr.mimeType || 'audio/webm' });
-
-          try {
-            onStatus && onStatus('解码音频…');
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
-            const buf = await blob.arrayBuffer();
-            const audioBuffer = await audioCtx.decodeAudioData(buf);
+          // 6 秒后自动停止
+          setTimeout(() => {
+            processor.disconnect();
+            source.disconnect();
             audioCtx.close();
-            const pcm = bufferToPCM(audioBuffer);
-            const text = await iatRecognize(pcm, onStatus);
-            text && text.trim() ? resolve(text.trim()) : reject(new Error('NO_SPEECH'));
-          } catch (e) {
-            reject(e.message === 'AUDIO_TOO_SHORT' ? e : new Error('AUDIO_DECODE_FAILED'));
+            stream.getTracks().forEach((t) => t.stop());
+
+            if (chunks.length === 0) return reject(new Error('NO_AUDIO'));
+
+            // 拼接所有 Int16 分块
+            const totalLen = chunks.reduce((s, c) => s + c.length, 0);
+            const pcm = new Int16Array(totalLen);
+            let offset = 0;
+            for (const c of chunks) {
+              pcm.set(c, offset);
+              offset += c.length;
+            }
+
+            if (pcm.length < 800) return reject(new Error('AUDIO_TOO_SHORT'));
+
+            iatRecognize(pcm.buffer, onStatus).then(resolve).catch(reject);
+          }, 6000);
+        })
+        .catch((err) => {
+          if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+            reject(new Error('PERMISSION_DENIED'));
+          } else {
+            reject(new Error('MEDIA_DEVICES_NOT_SUPPORTED'));
           }
-        };
-
-        mr.onerror = () => {
-          stream.getTracks().forEach((t) => t.stop());
-          reject(new Error('MEDIA_RECORDER_ERROR'));
-        };
-
-        // 录制 6 秒后自动停止
-        mr.start();
-        setTimeout(() => { if (mr.state === 'recording') mr.stop(); }, 6000);
-      }).catch((err) => {
-        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-          reject(new Error('PERMISSION_DENIED'));
-        } else {
-          reject(new Error('MEDIA_DEVICES_NOT_SUPPORTED'));
-        }
-      });
+        });
     });
   }
 
@@ -169,10 +158,7 @@
         const zv = voices.find((v) => v.lang.startsWith('zh') && v.localService);
         if (zv) u.voice = zv;
         u.onend = () => resolve();
-        u.onerror = (ev) => {
-          if (ev.error === 'canceled' || ev.error === 'interrupted') resolve();
-          else reject(new Error('SPEECH_SYNTHESIS_ERROR'));
-        };
+        u.onerror = (ev) => { if (ev.error === 'canceled' || ev.error === 'interrupted') resolve(); else reject(new Error('SPEECH_SYNTHESIS_ERROR')); };
         window.speechSynthesis.speak(u);
       };
       if (window.speechSynthesis.getVoices().length > 0) go();
