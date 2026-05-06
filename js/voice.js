@@ -157,7 +157,6 @@
     captureInput = document.createElement('input');
     captureInput.type = 'file';
     captureInput.accept = 'audio/*';
-    captureInput.setAttribute('capture', 'microphone');
     captureInput.style.display = 'none';
     document.body.appendChild(captureInput);
     return captureInput;
