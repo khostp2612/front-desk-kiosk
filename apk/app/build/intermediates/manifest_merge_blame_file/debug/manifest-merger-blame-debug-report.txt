@@ -1,0 +1,62 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.kiosk.app"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:4:5-67
+11-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:4:22-64
+12    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+12-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:5:5-71
+12-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:5:22-68
+13    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+13-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:6:5-80
+13-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:6:22-77
+14
+15    <application
+15-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:8:5-27:19
+16        android:allowBackup="true"
+16-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:9:9-35
+17        android:debuggable="true"
+18        android:extractNativeLibs="false"
+19        android:hardwareAccelerated="true"
+19-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:14:9-43
+20        android:icon="@drawable/icon"
+20-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:11:9-38
+21        android:label="前台助手"
+21-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:10:9-29
+22        android:supportsRtl="true"
+22-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:12:9-35
+23        android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+23-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:13:9-67
+24        android:usesCleartextTraffic="true" >
+24-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:15:9-44
+25        <activity
+25-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:17:9-26:20
+26            android:name="com.kiosk.app.MainActivity"
+26-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:18:13-41
+27            android:configChanges="orientation|screenSize|keyboardHidden"
+27-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:21:13-74
+28            android:exported="true"
+28-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:19:13-36
+29            android:screenOrientation="portrait" >
+29-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:20:13-49
+30            <intent-filter>
+30-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:22:13-25:29
+31                <action android:name="android.intent.action.MAIN" />
+31-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:23:17-69
+31-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:23:25-66
+32
+33                <category android:name="android.intent.category.LAUNCHER" />
+33-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:24:17-77
+33-->/Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:24:27-74
+34            </intent-filter>
+35        </activity>
+36    </application>
+37
+38</manifest>

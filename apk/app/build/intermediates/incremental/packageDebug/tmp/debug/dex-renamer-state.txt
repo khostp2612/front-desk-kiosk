@@ -1,0 +1,7 @@
+#Wed May 06 17:20:48 CST 2026
+base.1=/Users/mac/Projects/front-desk-kiosk/apk/app/build/intermediates/dex/debug/mergeProjectDexDebug/1/classes.dex
+path.1=1/classes.dex
+base.0=/Users/mac/Projects/front-desk-kiosk/apk/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
+renamed.1=classes2.dex
+renamed.0=classes.dex
+path.0=0/classes.dex

@@ -66,7 +66,12 @@
         ws.onmessage = (e) => {
           try {
             const m = JSON.parse(e.data);
-            if (m.code !== 0) { if (!done) { done = true; ws.close(); reject(new Error('STT_CODE_' + m.code)); } return; }
+            if (m.code !== 0) {
+              const errCode = m.code || 0;
+              const errMsg = m.message || '';
+              if (!done) { done = true; ws.close(); reject(new Error('STT_CODE_' + errCode + (errMsg ? '_' + errMsg : ''))); }
+              return;
+            }
             if (m.data?.result) {
               let text = '';
               for (const w of (m.data.result.ws || [])) for (const cw of (w.cw || [])) text += (cw.w || '');

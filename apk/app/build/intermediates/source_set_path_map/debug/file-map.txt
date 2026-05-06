@@ -1,0 +1,7 @@
+com.kiosk.app-pngs-0 /Users/mac/Projects/front-desk-kiosk/apk/app/build/generated/res/pngs/debug
+com.kiosk.app-resValues-1 /Users/mac/Projects/front-desk-kiosk/apk/app/build/generated/res/resValues/debug
+com.kiosk.app-packageDebugResources-2 /Users/mac/Projects/front-desk-kiosk/apk/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.kiosk.app-packageDebugResources-3 /Users/mac/Projects/front-desk-kiosk/apk/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.kiosk.app-merged_res-4 /Users/mac/Projects/front-desk-kiosk/apk/app/build/intermediates/merged_res/debug
+com.kiosk.app-debug-5 /Users/mac/Projects/front-desk-kiosk/apk/app/src/debug/res
+com.kiosk.app-main-6 /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/res

@@ -1,0 +1,73 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:2:1-28:12
+INJECTED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:2:1-28:12
+INJECTED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:2:1-28:12
+INJECTED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:2:1-28:12
+	package
+		INJECTED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:2:11-69
+uses-permission#android.permission.INTERNET
+ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:4:5-67
+	android:name
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:4:22-64
+uses-permission#android.permission.RECORD_AUDIO
+ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:5:5-71
+	android:name
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:5:22-68
+uses-permission#android.permission.MODIFY_AUDIO_SETTINGS
+ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:6:5-80
+	android:name
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:6:22-77
+application
+ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:8:5-27:19
+INJECTED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:8:5-27:19
+	android:extractNativeLibs
+		INJECTED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml
+	android:supportsRtl
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:12:9-35
+	android:label
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:10:9-29
+	android:hardwareAccelerated
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:14:9-43
+	android:icon
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:11:9-38
+	android:allowBackup
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:9:9-35
+	android:theme
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:13:9-67
+	android:usesCleartextTraffic
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:15:9-44
+activity#com.kiosk.app.MainActivity
+ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:17:9-26:20
+	android:screenOrientation
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:20:13-49
+	android:exported
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:19:13-36
+	android:configChanges
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:21:13-74
+	android:name
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:18:13-41
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:22:13-25:29
+action#android.intent.action.MAIN
+ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:23:17-69
+	android:name
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:23:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:24:17-77
+	android:name
+		ADDED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml:24:27-74
+uses-sdk
+INJECTED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml
+INJECTED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/mac/Projects/front-desk-kiosk/apk/app/src/main/AndroidManifest.xml
