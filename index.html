@@ -813,6 +813,13 @@
     // ========================================
 
     async function initApp() {
+      // 0. 默认注入讯飞凭据（首次使用）
+      if (!localStorage.getItem('xf_appid')) {
+        localStorage.setItem('xf_appid', '4e7b916e');
+        localStorage.setItem('xf_apikey', 'df4fc2e12bc2ce13318fc3a7a177dd16');
+        localStorage.setItem('xf_apisecret', 'NmQ5ZjAyMDI2YTlmZGE2MTc5NTE4ODEx');
+      }
+
       // 1. 设置初始状态
       statusDot.className = 'status-dot ready';
       statusText.textContent = '启动中…';
