@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#1a2a4a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>前台助手</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 顶部标题栏 -->
+  <header id="app-header">
+    <div class="header-content">
+      <span class="store-icon">💎</span>
+      <h1 class="store-name" id="store-name">前台助手</h1>
+    </div>
+    <div class="header-status">
+      <span class="status-dot" id="status-dot"></span>
+      <span class="status-text" id="status-text">在线</span>
+    </div>
+    <button id="settings-btn" class="settings-btn" aria-label="设置" title="设置">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- 对话区域 -->
+  <main id="chat-area" role="log" aria-live="polite">
+    <div class="welcome-message" id="welcome-message">
+      <div class="welcome-icon">👋</div>
+      <p>您好！我是前台助手，有什么可以帮您的？</p>
+    </div>
+  </main>
+
+  <!-- 底部输入区 -->
+  <footer id="input-area">
+    <div class="voice-status" id="voice-status">
+      <span class="voice-status-dot" id="voice-status-dot"></span>
+      <span class="voice-status-text" id="voice-status-text">点击话筒或输入文字</span>
+    </div>
+    <div class="input-row">
+      <button id="mic-button" class="mic-btn" aria-label="语音输入">
+        <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </button>
+      <input type="text" id="text-input" class="text-input" placeholder="或在此输入问题…" autocomplete="off">
+      <button id="send-button" class="send-btn" aria-label="发送">➤</button>
+    </div>
+    <div class="voice-wave" id="voice-wave">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </footer>
+
+  <!-- 离线提示 -->
+  <div id="offline-toast" class="toast hidden"></div>
+
+  <!-- 设置弹窗 -->
+  <div id="settings-overlay" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>系统设置</h2>
+        <button id="settings-close" class="modal-close" aria-label="关闭">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="store-name-input">店铺名称</label>
+          <input type="text" id="store-name-input" placeholder="例如：XX戒指定制工作室" maxlength="30">
+        </div>
+        <div class="form-group">
+          <label for="api-key-input">DeepSeek API Key</label>
+          <input type="password" id="api-key-input" placeholder="sk-..." spellcheck="false" autocomplete="off">
+          <p class="form-hint">用于 AI 智能回答，可在 <a href="https://platform.deepseek.com" target="_blank" rel="noopener">platform.deepseek.com</a> 获取</p>
+        </div>
+        <div class="form-group">
+          <label for="stt-endpoint-input">讯飞 APPID</label>
+          <input type="text" id="xf-appid-input" placeholder="4e7b916e" spellcheck="false">
+        </div>
+        <div class="form-group">
+          <label for="stt-api-key-input">讯飞 APIKey</label>
+          <input type="password" id="xf-apikey-input" placeholder="df4fc2e12bc2ce13318fc3a7a177dd16" spellcheck="false" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="stt-api-secret-input">讯飞 APISecret</label>
+          <input type="password" id="xf-apisecret-input" placeholder="NmQ5ZjAyMDI2YTlmZGE2MTc5NTE4ODEx" spellcheck="false" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="store-name-input">扩展知识库</label>
+          <textarea id="ext-knowledge-input" rows="4" placeholder="每行一条知识，例如：&#10;维修服务需要联系王师傅 138xxxxxx&#10;定制戒指工期约15个工作日" spellcheck="false"></textarea>
+          <p class="form-hint">Layer 2 模糊匹配的来源，保存后立即生效</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="settings-save" class="btn btn-primary">保存设置</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 密码弹窗（管理员入口） -->
+  <div id="admin-password-overlay" class="modal-overlay hidden">
+    <div class="modal-content modal-content--sm">
+      <div class="modal-header">
+        <h2>管理员验证</h2>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="admin-password-input">请输入管理密码</label>
+          <input type="password" id="admin-password-input" placeholder="请输入密码" autocomplete="off" spellcheck="false">
+        </div>
+        <p id="admin-password-error" class="form-error hidden">密码错误，请重试</p>
+      </div>
+      <div class="modal-footer">
+        <button id="admin-password-cancel" class="btn btn-secondary" style="margin-bottom:8px">取消</button>
+        <button id="admin-password-confirm" class="btn btn-primary">进入管理</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 管理后台 -->
+  <div id="admin-overlay" class="admin-overlay hidden">
+    <!-- 管理后台顶部栏 -->
+    <div class="admin-header">
+      <h1 class="admin-title">⚙️ 管理后台</h1>
+      <button id="admin-back-btn" class="btn btn-outline btn-outline--sm">← 返回前台</button>
+    </div>
+
+    <div class="admin-body">
+
+      <!-- ========== FAQ 管理 ========== -->
+      <section class="admin-section">
+        <div class="admin-section-header">
+          <h2>📋 FAQ 管理</h2>
+          <button id="faq-add-btn" class="btn btn-primary btn-primary--sm">+ 新增</button>
+        </div>
+        <div class="admin-faq-list" id="admin-faq-list">
+          <p class="admin-empty-hint">加载中…</p>
+        </div>
+      </section>
+
+      <!-- ========== 知识更新区 ========== -->
+      <section class="admin-section">
+        <div class="admin-section-header">
+          <h2>📚 扩展知识库</h2>
+        </div>
+        <p class="admin-hint">粘贴大段文本，系统会自动提取段落进行模糊匹配（Layer 2）</p>
+        <textarea id="admin-ext-knowledge" class="admin-textarea" rows="6" placeholder="例如门店服务流程说明、商品介绍等…"></textarea>
+        <button id="admin-ext-save" class="btn btn-primary" style="margin-top:8px">保存知识库</button>
+      </section>
+
+      <!-- ========== 导入导出 ========== -->
+      <section class="admin-section">
+        <div class="admin-section-header">
+          <h2>📦 导入 / 导出 FAQ</h2>
+        </div>
+        <div class="admin-io-row">
+          <button id="admin-export-btn" class="btn btn-secondary btn-secondary--sm">📥 导出 JSON</button>
+          <label class="btn btn-secondary btn-secondary--sm" style="cursor:pointer;text-align:center;">
+            📤 导入 JSON
+            <input type="file" id="admin-import-input" accept=".json" style="display:none">
+          </label>
+        </div>
+        <p class="admin-hint" style="margin-top:6px">导入会合并到现有 FAQ 中，相同关键词的条目会被覆盖</p>
+      </section>
+
+      <div style="height:40px"></div>
+    </div>
+  </div>
+
+  <!-- FAQ 编辑弹窗 -->
+  <div id="faq-form-overlay" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="faq-form-title">新增 FAQ</h2>
+        <button id="faq-form-close" class="modal-close" aria-label="关闭">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="faq-form-keywords">关键词（逗号分隔）</label>
+          <input type="text" id="faq-form-keywords" placeholder="例如：WiFi,无线,上网" spellcheck="false">
+        </div>
+        <div class="form-group">
+          <label for="faq-form-answer">答案</label>
+          <textarea id="faq-form-answer" rows="3" placeholder="例如：一楼卫生间在大厅左手边走廊尽头"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="faq-form-category">分类</label>
+          <select id="faq-form-category">
+            <option value="设施">设施</option>
+            <option value="周边">周边</option>
+            <option value="服务">服务</option>
+            <option value="门店">门店</option>
+            <option value="交通">交通</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex;gap:8px;">
+        <button id="faq-form-cancel" class="btn btn-secondary">取消</button>
+        <button id="faq-form-save" class="btn btn-primary">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/knowledge.js"></script>
+  <script src="js/voice.js"></script>
+  <script src="js/llm.js"></script>
+
+  <script>
+    // ========================================
+    // 前台助手 - 主逻辑
+    // ========================================
+
+    // --- Service Worker ---
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => {
+          console.warn('SW registration failed:', err);
+        });
+      });
+    }
+
+    // --- DOM 引用 ---
+    const $ = (id) => document.getElementById(id);
+    const chatArea = $('chat-area');
+    const welcomeMsg = $('welcome-message');
+    const micBtn = $('mic-button');
+    const micLabel = $('mic-label');
+    const statusDot = $('status-dot');
+    const statusText = $('status-text');
+    const voiceStatus = $('voice-status');
+    const voiceStatusDot = $('voice-status-dot');
+    const voiceStatusText = $('voice-status-text');
+    const voiceWave = $('voice-wave');
+    const offlineToast = $('offline-toast');
+
+    let isListening = false;
+
+    // --- 在线/离线 ---
+    window.addEventListener('online', () => {
+      statusDot.className = 'status-dot online';
+      statusText.textContent = '在线';
+      hideToast();
+    });
+
+    window.addEventListener('offline', () => {
+      statusDot.className = 'status-dot offline';
+      statusText.textContent = '离线';
+      showToast('您已离线，语音识别需要网络连接');
+    });
+
+    // 初始状态：检测网络
+    function updateOnlineStatus() {
+      if (navigator.onLine) {
+        statusDot.className = 'status-dot online';
+        statusText.textContent = '在线';
+      } else {
+        statusDot.className = 'status-dot offline';
+        statusText.textContent = '离线';
+      }
+    }
+    updateOnlineStatus();
+
+    function showToast(msg) {
+      offlineToast.textContent = msg;
+      offlineToast.classList.remove('hidden');
+      offlineToast.classList.add('visible');
+      setTimeout(hideToast, 3500);
+    }
+
+    function hideToast() {
+      offlineToast.classList.remove('visible');
+      offlineToast.classList.add('hidden');
+    }
+
+    // --- 添加消息气泡 ---
+    function addMessage(text, role = 'assistant') {
+      if (welcomeMsg) welcomeMsg.style.display = 'none';
+
+      const bubble = document.createElement('div');
+      bubble.className = `message ${role}`;
+      bubble.innerHTML = `<div class="bubble">${text}</div>`;
+      chatArea.appendChild(bubble);
+      // 自动滚动到底部
+      requestAnimationFrame(() => {
+        chatArea.scrollTop = chatArea.scrollHeight;
+      });
+    }
+
+    // --- 设置语音状态 ---
+    function setVoiceState(state) {
+      switch (state) {
+        case 'idle':
+          voiceStatusDot.className = 'voice-status-dot idle';
+          voiceStatusText.textContent = '点击麦克风开始';
+          voiceWave.classList.remove('active');
+          break;
+        case 'listening':
+          voiceStatusDot.className = 'voice-status-dot listening';
+          voiceStatusText.textContent = '正在聆听…';
+          voiceWave.classList.add('active');
+          break;
+        case 'processing':
+          voiceStatusDot.className = 'voice-status-dot processing';
+          voiceStatusText.textContent = '处理中…';
+          voiceWave.classList.remove('active');
+          break;
+        case 'thinking':
+          voiceStatusDot.className = 'voice-status-dot processing';
+          voiceStatusText.textContent = '思考中…';
+          voiceWave.classList.remove('active');
+          break;
+        case 'speaking':
+          voiceStatusDot.className = 'voice-status-dot speaking';
+          voiceStatusText.textContent = '播报中…';
+          voiceWave.classList.remove('active');
+          break;
+        case 'error':
+          voiceStatusDot.className = 'voice-status-dot error';
+          voiceStatusText.textContent = '出错了';
+          voiceWave.classList.remove('active');
+          break;
+      }
+    }
+
+    // --- 语音识别错误消息映射 ---
+    function getErrorMessage(code) {
+      const map = {
+        'PERMISSION_DENIED': '麦克风权限被拒绝，请在系统设置中允许',
+        'NO_SPEECH': '没有检测到语音，请重试',
+        'TIMEOUT': '识别超时，请重试',
+        'AUDIO_CAPTURE_ERROR': '麦克风无法访问',
+        'NO_AUDIO': '未录到声音，请靠近话筒说话',
+        'STT_NOT_CONFIGURED': '请先在 ⚙️ 设置中配置语音识别服务',
+        'STT_AUTH_ERROR': '语音识别 API Key 无效，请在设置中更新',
+        'STT_RATE_LIMITED': '语音识别服务繁忙，请稍后再试',
+        'STT_API_ERROR': '语音识别服务异常，请用文字输入',
+        'SPEECH_RECOGNITION_NOT_SUPPORTED': '请先在设置中配置语音识别服务',
+        'MEDIA_DEVICES_NOT_SUPPORTED': '当前设备不支持麦克风',
+        'MEDIA_DEVICES_ERROR': '麦克风访问失败',
+        'MEDIA_RECORDER_ERROR': '录音功能不可用，请用文字输入',
+      };
+      return map[code] || '语音识别出错，请重试';
+    }
+
+    // --- 处理语音识别结果 ---
+    async function handleVoiceInput() {
+      if (!Voice.isConfigured || !Voice.isConfigured()) {
+        showToast('请先在 ⚙️ 设置中配置语音识别服务');
+        showSettings();
+        return;
+      }
+
+      if (isListening) return;
+      isListening = true;
+      micBtn.classList.add('recording');
+      setVoiceState('listening');
+
+      try {
+        const transcript = await Voice.startListening({ maxDuration: 8000 });
+        if (!transcript || !transcript.trim()) {
+          throw new Error('NO_SPEECH');
+        }
+        micBtn.classList.remove('recording');
+        setVoiceState('processing');
+        addMessage(transcript, 'user');
+        await simulateReply(transcript);
+      } catch (err) {
+        setVoiceState('error');
+        const userMsg = getErrorMessage(err.message);
+        showToast(userMsg);
+        setTimeout(() => setVoiceState('idle'), 2000);
+      } finally {
+        micBtn.classList.remove('recording');
+        isListening = false;
+      }
+    }
+
+    // --- 文字输入处理 ---
+    async function handleTextInput() {
+      const input = document.getElementById('text-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      addMessage(text, 'user');
+      setVoiceState('processing');
+      await simulateReply(text);
+    }
+
+    // --- Layer 3 LLM 错误消息映射 ---
+    function getLLMErrorMessage(code) {
+      const map = {
+        'API_KEY_MISSING': '请管理员先配置 AI 服务 API Key',
+        'API_KEY_INVALID': 'API Key 无效，请在设置中更新',
+        'API_RATE_LIMITED': 'AI 服务繁忙，请稍后再试',
+        'API_TIMEOUT': 'AI 服务响应超时，请稍后再试',
+        'API_NETWORK_ERROR': '网络连接异常，AI 服务暂时不可用',
+        'API_HTTP_ERROR': 'AI 服务异常，请联系管理员',
+        'API_EMPTY_RESPONSE': 'AI 服务返回为空，请重试',
+      };
+      return map[code] || '抱歉，我暂时无法回答这个问题，请联系工作人员';
+    }
+
+    // --- 知识库 + LLM 兜底回复 ---
+    async function simulateReply(userText) {
+      setVoiceState('processing');
+
+      let reply;
+
+      try {
+        // Layer 1 & 2: 知识库匹配
+        const result = await Knowledge.match(userText);
+
+        if (result.matched) {
+          reply = result.answer;
+        } else {
+          // Layer 3: LLM 兜底
+          setVoiceState('thinking');
+          try {
+            reply = await LLM.askLLM(userText);
+          } catch (llmErr) {
+            const code = llmErr.message;
+            reply = getLLMErrorMessage(code);
+          }
+        }
+      } catch (e) {
+        console.warn('simulateReply error:', e);
+        reply = '好的，我记下了。<br>请问还有什么可以帮您的？';
+      }
+
+      await delay(400);
+      addMessage(reply, 'assistant');
+
+      // 保存对话记录
+      try {
+        if (window.Storage) {
+          Storage.saveConversation(userText, reply);
+        }
+      } catch (e) { /* 静默 */ }
+
+      // 朗读回复
+      const plainText = reply.replace(/<br\s*\/?>/g, '，').replace(/<[^>]*>/g, '');
+      setVoiceState('speaking');
+      try {
+        await Voice.speak(plainText, { lang: 'zh-CN', rate: 1.0 });
+      } catch (_) { /* 朗读失败不阻塞 */ }
+      setVoiceState('idle');
+    }
+
+    function delay(ms) {
+      return new Promise((r) => setTimeout(r, ms));
+    }
+
+    // --- 麦克风按钮事件（支持触摸和鼠标） ---
+    micBtn.addEventListener('click', handleVoiceInput);
+
+    // 触摸设备防误触
+    micBtn.addEventListener('touchstart', (e) => {});
+
+    // --- 文字输入 ---
+    const textInput = $('text-input');
+    const sendBtn = $('send-button');
+    sendBtn.addEventListener('click', handleTextInput);
+    textInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleTextInput();
+    });
+
+    // ========================================
+    // 设置面板
+    // ========================================
+
+    const settingsBtn = $('settings-btn');
+    const settingsOverlay = $('settings-overlay');
+    const settingsClose = $('settings-close');
+    const settingsSave = $('settings-save');
+    const storeNameInput = $('store-name-input');
+    const apiKeyInput = $('api-key-input');
+    const sttEndpointInput = $('xf-appid-input');
+    const sttApiKeyInput = $('xf-apikey-input');
+    const sttApiSecretInput = $('xf-apisecret-input');
+
+    function showSettings() {
+      storeNameInput.value = localStorage.getItem('store_name') || '前台助手';
+      apiKeyInput.value = LLM.getApiKey() || '';
+      sttEndpointInput.value = localStorage.getItem('xf_appid') || '';
+      sttApiKeyInput.value = localStorage.getItem('xf_apikey') || '';
+      sttApiSecretInput.value = localStorage.getItem('xf_apisecret') || '';
+      extKnowledgeInput.value = Storage.loadExtendedKnowledge() || '';
+      settingsOverlay.classList.remove('hidden');
+      settingsOverlay.classList.add('visible');
+    }
+
+    // 打开设置面板
+    settingsBtn.addEventListener('click', showSettings);
+
+    // 关闭设置面板
+    function closeSettings() {
+      settingsOverlay.classList.remove('visible');
+      settingsOverlay.classList.add('hidden');
+    }
+    settingsClose.addEventListener('click', closeSettings);
+    settingsOverlay.addEventListener('click', (e) => {
+      if (e.target === settingsOverlay) closeSettings();
+    });
+
+    // 保存设置
+    settingsSave.addEventListener('click', () => {
+      const name = storeNameInput.value.trim();
+      const key = apiKeyInput.value.trim();
+      const xfAppId = sttEndpointInput.value.trim();
+      const xfApiKey = sttApiKeyInput.value.trim();
+      const xfApiSecret = sttApiSecretInput.value.trim();
+      const ext = extKnowledgeInput.value.trim();
+
+      if (name) {
+        localStorage.setItem('store_name', name);
+        $('store-name').textContent = name;
+      }
+      if (key) {
+        localStorage.setItem('deepseek_api_key', key);
+      } else {
+        localStorage.removeItem('deepseek_api_key');
+      }
+      if (xfAppId) localStorage.setItem('xf_appid', xfAppId);
+      else localStorage.removeItem('xf_appid');
+      if (xfApiKey) localStorage.setItem('xf_apikey', xfApiKey);
+      else localStorage.removeItem('xf_apikey');
+      if (xfApiSecret) localStorage.setItem('xf_apisecret', xfApiSecret);
+      else localStorage.removeItem('xf_apisecret');
+
+      if (ext) {
+        Storage.saveExtendedKnowledge(ext);
+      } else {
+        Storage.saveExtendedKnowledge('');
+        localStorage.removeItem(Storage.KEYS.EXTENDED);
+      }
+
+      closeSettings();
+      showToast('设置已保存');
+    });
+
+    // 加载店铺名称
+    const savedName = localStorage.getItem('store_name');
+    if (savedName) $('store-name').textContent = savedName;
+
+    // ========================================
+    // 管理后台
+    // ========================================
+
+    const ADMIN_PASSWORD = 'admin123';
+    let titleTapCount = 0;
+    let titleTapTimer = null;
+
+    // 标题连续点击5次触发密码弹窗
+    $('store-name').addEventListener('click', () => {
+      titleTapCount++;
+      clearTimeout(titleTapTimer);
+      titleTapTimer = setTimeout(() => { titleTapCount = 0; }, 2000);
+
+      if (titleTapCount >= 5) {
+        titleTapCount = 0;
+        // 打开密码弹窗
+        $('admin-password-input').value = '';
+        $('admin-password-error').classList.add('hidden');
+        $('admin-password-overlay').classList.remove('hidden');
+        $('admin-password-overlay').classList.add('visible');
+        setTimeout(() => $('admin-password-input').focus(), 300);
+      }
+    });
+
+    // 密码确认
+    $('admin-password-confirm').addEventListener('click', () => {
+      const pw = $('admin-password-input').value.trim();
+      if (pw === ADMIN_PASSWORD) {
+        $('admin-password-overlay').classList.remove('visible');
+        $('admin-password-overlay').classList.add('hidden');
+        enterAdminPanel();
+      } else {
+        $('admin-password-error').classList.remove('hidden');
+      }
+    });
+
+    // 回车确认密码
+    $('admin-password-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') $('admin-password-confirm').click();
+    });
+
+    // 取消密码
+    $('admin-password-cancel').addEventListener('click', () => {
+      $('admin-password-overlay').classList.remove('visible');
+      $('admin-password-overlay').classList.add('hidden');
+    });
+
+    // 进入管理后台
+    function enterAdminPanel() {
+      $('admin-overlay').classList.remove('hidden');
+      renderFAQList();
+      // 加载扩展知识库
+      const ext = Storage.loadExtendedKnowledge() || '';
+      $('admin-ext-knowledge').value = ext;
+    }
+
+    // 返回前台
+    $('admin-back-btn').addEventListener('click', () => {
+      $('admin-overlay').classList.add('hidden');
+    });
+
+    // --- FAQ 列表渲染 ---
+    let faqEditIndex = -1; // -1 = 新增
+
+    function getFAQData() {
+      const stored = Storage.loadFAQ();
+      return stored || [];
+    }
+
+    function saveFAQData(list) {
+      Storage.saveFAQ(list);
+      // 清除 Knowledge 的内存缓存，下次 match 会重新加载
+    }
+
+    function renderFAQList() {
+      const container = $('admin-faq-list');
+      const list = getFAQData();
+
+      if (!list || list.length === 0) {
+        container.innerHTML = '<p class="admin-empty-hint">暂无 FAQ，点击右上角新增</p>';
+        return;
+      }
+
+      container.innerHTML = list.map((faq, idx) => `
+        <div class="admin-faq-item">
+          <div class="admin-faq-item-header">
+            <span class="admin-faq-cat">${escapeHtml(faq.category || '其他')}</span>
+          </div>
+          <div class="admin-faq-kw">${escapeHtml((faq.keywords || []).join('、'))}</div>
+          <div class="admin-faq-ans">${escapeHtml(faq.answer || '')}</div>
+          <div class="admin-faq-actions">
+            <button class="btn-link" onclick="openFAQForm(${idx})">编辑</button>
+            <button class="btn-link btn-link--danger" onclick="deleteFAQ(${idx})">删除</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // --- FAQ 新增/编辑 ---
+    window.openFAQForm = function(index) {
+      faqEditIndex = index;
+      const list = getFAQData();
+
+      if (index >= 0 && index < list.length) {
+        const faq = list[index];
+        $('faq-form-title').textContent = '编辑 FAQ';
+        $('faq-form-keywords').value = (faq.keywords || []).join(',');
+        $('faq-form-answer').value = faq.answer || '';
+        $('faq-form-category').value = faq.category || '其他';
+      } else {
+        $('faq-form-title').textContent = '新增 FAQ';
+        $('faq-form-keywords').value = '';
+        $('faq-form-answer').value = '';
+        $('faq-form-category').value = '服务';
+      }
+
+      $('faq-form-overlay').classList.remove('hidden');
+      $('faq-form-overlay').classList.add('visible');
+    };
+
+    $('faq-add-btn').addEventListener('click', () => window.openFAQForm(-1));
+
+    function closeFAQForm() {
+      $('faq-form-overlay').classList.remove('visible');
+      $('faq-form-overlay').classList.add('hidden');
+    }
+
+    $('faq-form-close').addEventListener('click', closeFAQForm);
+    $('faq-form-cancel').addEventListener('click', closeFAQForm);
+    $('faq-form-overlay').addEventListener('click', (e) => {
+      if (e.target === $('faq-form-overlay')) closeFAQForm();
+    });
+
+    $('faq-form-save').addEventListener('click', () => {
+      const keywordsRaw = $('faq-form-keywords').value.trim();
+      const answer = $('faq-form-answer').value.trim();
+      const category = $('faq-form-category').value;
+
+      if (!keywordsRaw || !answer) {
+        showToast('请填写关键词和答案');
+        return;
+      }
+
+      const keywords = keywordsRaw.split(/[,，、]+/).map(s => s.trim()).filter(Boolean);
+      if (keywords.length === 0) {
+        showToast('请至少填写一个关键词');
+        return;
+      }
+
+      const list = getFAQData();
+      const entry = { keywords, answer, category };
+
+      if (faqEditIndex >= 0 && faqEditIndex < list.length) {
+        list[faqEditIndex] = entry;
+      } else {
+        list.push(entry);
+      }
+
+      saveFAQData(list);
+      closeFAQForm();
+      renderFAQList();
+      showToast('FAQ 已保存');
+    });
+
+    // --- 删除 FAQ ---
+    window.deleteFAQ = function(index) {
+      const list = getFAQData();
+      if (index < 0 || index >= list.length) return;
+      if (!confirm('确定要删除这条 FAQ 吗？')) return;
+      list.splice(index, 1);
+      saveFAQData(list);
+      renderFAQList();
+      showToast('已删除');
+    };
+
+    // --- 扩展知识库保存 ---
+    $('admin-ext-save').addEventListener('click', () => {
+      const text = $('admin-ext-knowledge').value.trim();
+      if (text) {
+        Storage.saveExtendedKnowledge(text);
+      } else {
+        Storage.saveExtendedKnowledge('');
+        localStorage.removeItem(Storage.KEYS.EXTENDED);
+      }
+      showToast('扩展知识库已保存');
+    });
+
+    // --- 导出 FAQ ---
+    $('admin-export-btn').addEventListener('click', () => {
+      const list = getFAQData();
+      if (!list || list.length === 0) {
+        showToast('暂无 FAQ 可导出');
+        return;
+      }
+      const blob = new Blob([JSON.stringify(list, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'faq-export-' + new Date().toISOString().slice(0, 10) + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('导出成功');
+    });
+
+    // --- 导入 FAQ ---
+    $('admin-import-input').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const imported = JSON.parse(ev.target.result);
+          if (!Array.isArray(imported)) throw new Error('格式错误');
+
+          const current = getFAQData();
+
+          // 合并：用导入的 keywords 作为 key，覆盖已有
+          for (const item of imported) {
+            if (!item.keywords || !item.answer) continue;
+            const kwSet = new Set(item.keywords.map(k => k.trim()));
+            const existingIdx = current.findIndex(f => {
+              const fSet = new Set(f.keywords);
+              // 如果两个集合的交集 > 各自的一半，视为同一条
+              const overlap = [...kwSet].filter(k => fSet.has(k)).length;
+              return overlap >= Math.min(kwSet.size, fSet.size) * 0.5;
+            });
+            if (existingIdx >= 0) {
+              current[existingIdx] = { keywords: item.keywords, answer: item.answer, category: item.category || '其他' };
+            } else {
+              current.push({ keywords: item.keywords, answer: item.answer, category: item.category || '其他' });
+            }
+          }
+
+          saveFAQData(current);
+          renderFAQList();
+          showToast('导入完成，共合并 ' + imported.length + ' 条');
+        } catch (err) {
+          showToast('导入失败：文件格式不正确');
+        }
+      };
+      reader.readAsText(file);
+      // 重置 input 以便重复选择同一文件
+      e.target.value = '';
+    });
+
+    // ========================================
+    // 初始化流程
+    // ========================================
+
+    async function initApp() {
+      // 1. 设置初始状态
+      statusDot.className = 'status-dot ready';
+      statusText.textContent = '启动中…';
+      setVoiceState('idle');
+
+      // 2. 检查语音支持
+      if (!Voice.isRecognitionSupported) {
+        showToast('当前浏览器不支持语音识别，请使用 Chrome 或华为浏览器');
+        micBtn.style.opacity = '0.5';
+        micBtn.style.cursor = 'not-allowed';
+      }
+
+      // 3. 预加载 FAQ（让 Knowledge 的缓存热起来，首次 match 更快）
+      try {
+        await Knowledge.loadFAQ();
+      } catch (e) {
+        console.warn('FAQ preload failed:', e);
+      }
+
+      // 4. 检查 API Key
+      if (!LLM.isConfigured()) {
+        // 非阻塞提示，3 秒后消失
+        setTimeout(() => {
+          showToast('💡 AI 未配置，点击 ⚙️ 设置 API Key 获得智能回答');
+        }, 1200);
+      }
+
+      // 5. 恢复在线状态
+      updateOnlineStatus();
+
+      // 6. 显示欢迎消息
+      addMessage('您好！我是前台助手，请问有什么可以帮您？', 'assistant');
+    }
+
+    // 页面完全加载后启动
+    if (document.readyState === 'complete') {
+      initApp();
+    } else {
+      window.addEventListener('load', initApp);
+    }
+  </script>
+</body>
+</html>
