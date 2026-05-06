@@ -3,7 +3,7 @@
    Cache-First 离线策略
    ======================================== */
 
-const CACHE_NAME = 'front-desk-kiosk-v1';
+const CACHE_NAME = 'front-desk-kiosk-v3';
 
 const PRECACHE_URLS = [
   '/',
