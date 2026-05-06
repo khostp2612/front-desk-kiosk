@@ -344,12 +344,16 @@
         'STT_AUTH_ERROR': '语音识别 API Key 无效，请在设置中更新',
         'STT_RATE_LIMITED': '语音识别服务繁忙，请稍后再试',
         'STT_API_ERROR': '语音识别服务异常，请用文字输入',
+        'STT_WS_ERROR': '语音识别连接失败，请检查网络',
         'SPEECH_RECOGNITION_NOT_SUPPORTED': '请先在设置中配置语音识别服务',
         'MEDIA_DEVICES_NOT_SUPPORTED': '当前设备不支持麦克风',
         'MEDIA_DEVICES_ERROR': '麦克风访问失败',
         'MEDIA_RECORDER_ERROR': '录音功能不可用，请用文字输入',
+        'AUDIO_CONTEXT_FAILED': '音频引擎初始化失败',
+        'AUDIO_DECODE_FAILED': '录音格式不支持，请用系统自带录音机',
+        'AUDIO_TOO_SHORT': '录音太短，请说完整问题后停止',
       };
-      return map[code] || '语音识别出错，请重试';
+      return map[code] || (code && code.startsWith('STT_CODE_') ? '识别服务返回错误(' + code + ')，请重试' : '语音识别出错，请重试');
     }
 
     // --- 处理语音识别结果 ---
@@ -365,20 +369,25 @@
       micBtn.classList.add('recording');
       setVoiceState('listening');
 
+      const setStatus = (msg) => {
+        voiceStatusText.textContent = msg;
+        voiceStatusDot.className = 'voice-status-dot processing';
+      };
+
       try {
-        const transcript = await Voice.startListening({ maxDuration: 8000 });
+        const transcript = await Voice.startListening(setStatus);
         if (!transcript || !transcript.trim()) {
           throw new Error('NO_SPEECH');
         }
         micBtn.classList.remove('recording');
         setVoiceState('processing');
+        voiceStatusText.textContent = '回复中…';
         addMessage(transcript, 'user');
         await simulateReply(transcript);
       } catch (err) {
         setVoiceState('error');
-        const userMsg = getErrorMessage(err.message);
-        showToast(userMsg);
-        setTimeout(() => setVoiceState('idle'), 2000);
+        voiceStatusText.textContent = getErrorMessage(err.message);
+        setTimeout(() => setVoiceState('idle'), 3000);
       } finally {
         micBtn.classList.remove('recording');
         isListening = false;
